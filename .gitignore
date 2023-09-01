@@ -32,3 +32,6 @@ result-*
 
 # ---> ntfy-bridge
 /config.scfg
+
+# ---> goreleaser
+dist/
