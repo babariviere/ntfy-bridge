@@ -33,7 +33,7 @@ func readConfig() (config.Config, error) {
 }
 
 func main() {
-	cfg, err := config.ReadConfig("config.scfg")
+	cfg, err := readConfig()
 	if err != nil {
 		slog.Error("failed to read config", "error", err)
 		os.Exit(2)
@@ -77,6 +77,7 @@ func main() {
 		}
 
 		slog.Debug("Registering bridge", "route", route, "handler", handler.Type)
+		// TODO: use default topic if topic == ""
 		bridge := bridge.NewBridge(cfg.Ntfy.Server, handler.Topic, h)
 		if !auth.IsEmpty() {
 			bridge.WithAuth(auth)
