@@ -35,6 +35,13 @@ changelog:
       - '^docs:'
       - '^test:'
 
+dockers:
+  - image_templates:
+      - "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Tag }}"
+      - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}"
+      - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}.{{ .Minor }}"
+      - "forge.babariviere.com/babariviere/ntfy-bridge:latest"
+
 gitea_urls:
   api: https://forge.babariviere.com/api/v1
   download: https://forge.babariviere.com
