@@ -41,6 +41,7 @@ dockers:
       - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}"
       - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}.{{ .Minor }}"
       - "forge.babariviere.com/babariviere/ntfy-bridge:latest"
+    dockerfile: release/Dockerfile
 
 gitea_urls:
   api: https://forge.babariviere.com/api/v1
