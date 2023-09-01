@@ -38,10 +38,16 @@ changelog:
 dockers:
   - image_templates:
       - "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Tag }}"
-      - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}"
-      - "forge.babariviere.com/babariviere/ntfy-bridge:v{{ .Major }}.{{ .Minor }}"
+      - "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Major }}"
+      - "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Major }}.{{ .Minor }}"
       - "forge.babariviere.com/babariviere/ntfy-bridge:latest"
     dockerfile: release/Dockerfile
+
+docker_manifests:
+  - name_template: "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Tag }}"
+  - name_template: "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Major }}"
+  - name_template: "forge.babariviere.com/babariviere/ntfy-bridge:{{ .Major }}.{{ .Minor }}"
+  - name_template: "forge.babariviere.com/babariviere/ntfy-bridge:latest"
 
 gitea_urls:
   api: https://forge.babariviere.com/api/v1
