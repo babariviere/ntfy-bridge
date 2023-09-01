@@ -1,0 +1,19 @@
+# listening address for the http server
+http-address 0.0.0.0:8080
+log-level info
+# text or json
+log-format text
+
+ntfy {
+  server "https://ntfy.sh"
+}
+
+handler "/flux" {
+  type "flux"
+  topic "/flux"
+}
+
+# handler "/alertmanager" {
+#   type "alertmanager"
+#   topic "/infra"
+# }
