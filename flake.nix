@@ -21,6 +21,17 @@
         system,
         ...
       }: {
+        _module.args.pkgs = import inputs.nixpkgs {
+          inherit system;
+          overlays = [
+            (final: prev: {
+              go = prev.go_1_21;
+              gopls = prev.gopls.override {buildGoModule = prev.buildGo121Module;};
+            })
+          ];
+          config = {};
+        };
+
         treefmt = {
           projectRootFile = ".git/config";
           programs = {
