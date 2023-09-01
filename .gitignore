@@ -29,3 +29,6 @@ result-*
 
 # ---> Direnv
 .direnv
+
+# ---> ntfy-bridge
+/config.scfg
