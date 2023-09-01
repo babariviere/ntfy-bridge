@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -9,6 +10,27 @@ import (
 	"forge.babariviere.com/babariviere/ntfy-bridge/bridge"
 	"forge.babariviere.com/babariviere/ntfy-bridge/config"
 )
+
+// TODO: allow to pass config path
+func readConfig() (config.Config, error) {
+	paths := []string{
+		"config.scfg",
+		// TODO: properly handle XDG_CONFIG
+		os.Getenv("HOME") + "/.config/ntfy-bridge/config.scfg",
+		os.Getenv("HOME") + "/.ntfy-bridge/config.scfg",
+		"/etc/ntfy-bridge/config.scfg",
+	}
+
+	for _, path := range paths {
+		if _, err := os.Stat(path); err != nil {
+			continue
+		}
+
+		return config.ReadConfig(path)
+	}
+
+	return config.Config{}, errors.New("no configuration file found")
+}
 
 func main() {
 	cfg, err := config.ReadConfig("config.scfg")
