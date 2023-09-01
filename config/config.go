@@ -10,9 +10,16 @@ import (
 type HandlerType int
 
 const (
-	HandlerNone HandlerType = iota
-	HandlerFlux
+	HandlerFlux HandlerType = iota + 1
 )
+
+func (h HandlerType) String() string {
+	switch h {
+	case HandlerFlux:
+		return "flux"
+	}
+	panic("unreachable")
+}
 
 type LogFormat int
 
@@ -33,6 +40,9 @@ type Config struct {
 type ntfy struct {
 	Server       string
 	DefaultTopic string
+	AccessToken  string
+	Username     string
+	Password     string
 }
 
 func (n *ntfy) readConfig(cfg scfg.Block) error {
@@ -40,7 +50,20 @@ func (n *ntfy) readConfig(cfg scfg.Block) error {
 		return err
 	}
 
-	return readString(cfg, "default-topic", &n.DefaultTopic)
+	if err := readString(cfg, "default-topic", &n.DefaultTopic); err != nil {
+		return err
+	}
+
+	// TODO: handle env var in config
+	if err := readString(cfg, "access-token", &n.AccessToken); err != nil {
+		return err
+	}
+
+	if err := readString(cfg, "username", &n.Username); err != nil {
+		return err
+	}
+
+	return readString(cfg, "password", &n.Password)
 }
 
 type handler struct {
@@ -108,29 +131,25 @@ func ReadConfig(path string) (Config, error) {
 		config.Handlers[key] = h
 	}
 
-	for _, block := range cfg {
-		fmt.Printf("%+v\n", block)
-
-	}
 	return config, nil
 }
 
 func readHandlerType(d *scfg.Directive) (HandlerType, error) {
 	if d == nil {
-		return HandlerNone, errors.New("handler.type is missing")
+		return 0, errors.New("handler.type is missing")
 	}
 
 	var ty string
 
 	if err := d.ParseParams(&ty); err != nil {
-		return HandlerNone, err
+		return 0, err
 	}
 
 	switch ty {
 	case "flux":
 		return HandlerFlux, nil
 	default:
-		return HandlerNone, fmt.Errorf("invalid handler type %q", ty)
+		return 0, fmt.Errorf("invalid handler type %q", ty)
 	}
 }
 

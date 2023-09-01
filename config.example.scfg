@@ -6,6 +6,12 @@ log-format text
 
 ntfy {
   server "https://ntfy.sh"
+  # optional username + password
+  # username test
+  # password test
+
+  # or access token
+  access-token "..."
 }
 
 handler "/flux" {
