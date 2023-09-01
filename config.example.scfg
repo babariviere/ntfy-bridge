@@ -16,7 +16,7 @@ ntfy {
 
 handler "/flux" {
   type "flux"
-  topic "/flux"
+  topic "flux"
 }
 
 # handler "/alertmanager" {
