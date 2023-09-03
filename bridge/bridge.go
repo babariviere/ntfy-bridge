@@ -4,7 +4,6 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"io"
 	"log/slog"
 	"net/http"
 	"strconv"
@@ -16,7 +15,7 @@ var (
 )
 
 type Handler interface {
-	FormatNotification(r io.Reader) (Notification, error)
+	ProduceNotifications(r *http.Request) ([]Notification, error)
 }
 
 type NotificationError struct {
@@ -132,8 +131,7 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	not, err := b.h.FormatNotification(r.Body)
-	defer r.Body.Close()
+	nots, err := b.h.ProduceNotifications(r)
 
 	if errors.Is(err, errSkipNotification) {
 		w.WriteHeader(http.StatusNoContent)
@@ -146,15 +144,17 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	not.topic = b.topic
-	not.auth = b.auth
-	if err = not.Send(b.baseURL); err != nil {
-		slog.Error("unable to send notification", "error", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+	for _, not := range nots {
+		not.topic = b.topic
+		not.auth = b.auth
+		if err = not.Send(b.baseURL); err != nil {
+			slog.Error("unable to send notification", "error", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 	}
 
-	slog.Debug("notification sent with success")
+	slog.Debug("notifications sent with success", "sent", len(nots))
 
 	w.WriteHeader(http.StatusNoContent)
 }

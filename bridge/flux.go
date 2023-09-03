@@ -3,8 +3,8 @@ package bridge
 import (
 	"encoding/json"
 	"fmt"
-	"io"
 	"log/slog"
+	"net/http"
 	"strings"
 	"time"
 )
@@ -48,21 +48,22 @@ func NewFluxHandler() FluxHandler {
 	}
 }
 
-func (f FluxHandler) FormatNotification(r io.Reader) (Notification, error) {
+func (f FluxHandler) ProduceNotifications(r *http.Request) ([]Notification, error) {
 	l := slog.With(slog.String("handler", "flux"))
-	dec := json.NewDecoder(r)
+	dec := json.NewDecoder(r.Body)
+	defer r.Body.Close()
 
 	var not FluxNotification
 	if err := dec.Decode(&not); err != nil {
-		l.Error("invalid message format in flux", "error", err)
-		return Notification{}, err
+		l.Error("invalid message format", "error", err)
+		return nil, err
 	}
 
 	obj := not.InvolvedObject.String()
 	if not.Reason == "ReconciliationSucceeded" {
 		if ok := f.reconciliations[obj]; !ok {
 			// Filter out spammy ReconciliationSucceeded notification
-			return Notification{}, errSkipNotification
+			return nil, errSkipNotification
 		}
 
 		// we will print the object so skip it next time it spam
@@ -78,9 +79,9 @@ func (f FluxHandler) FormatNotification(r io.Reader) (Notification, error) {
 	l.Debug("flux notification", slog.Group("notification",
 		slog.String("title", title),
 		slog.String("body", body)))
-	return Notification{
+	return []Notification{{
 		Title:      title,
 		Body:       body,
 		IsMarkdown: true,
-	}, nil
+	}}, nil
 }
