@@ -31,6 +31,10 @@ type Notification struct {
 	auth  Auth
 }
 
+func (n Notification) IsEmpty() bool {
+	return n.Title == "" && n.Body == ""
+}
+
 func (n Notification) Send(base string) error {
 	req, err := http.NewRequest("POST", base+"/"+n.topic, strings.NewReader(n.Body))
 	if err != nil {
@@ -130,6 +134,13 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		slog.Error("failed to format notification")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// If notification is empty, that means it should be ignored.
+	// TODO: maybe return an error instead of empty notification
+	if not.IsEmpty() {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 

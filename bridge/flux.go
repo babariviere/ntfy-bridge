@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// TODO: use skaffold to see why the revision is not present
 type FluxNotification struct {
 	InvolvedObject struct {
 		APIVersion string `json:"apiVersion"`
@@ -42,6 +43,11 @@ func (f FluxHandler) FormatNotification(r io.Reader) (Notification, error) {
 	if err := dec.Decode(&not); err != nil {
 		l.Error("invalid message format in flux", "error", err)
 		return Notification{}, err
+	}
+
+	if not.Reason == "ReconciliationSucceeded" {
+		// Filter out spammy ReconciliationSucceeded notification
+		return Notification{}, nil
 	}
 
 	title := fmt.Sprintf("[%s] %s %s/%s.%s", not.Severity, not.Reason,
