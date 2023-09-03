@@ -11,12 +11,15 @@ type HandlerType int
 
 const (
 	HandlerFlux HandlerType = iota + 1
+	HandlerDiscordEmbed
 )
 
 func (h HandlerType) String() string {
 	switch h {
 	case HandlerFlux:
 		return "flux"
+	case HandlerDiscordEmbed:
+		return "discord_embed"
 	}
 	panic("unreachable")
 }
@@ -148,6 +151,8 @@ func readHandlerType(d *scfg.Directive) (HandlerType, error) {
 	switch ty {
 	case "flux":
 		return HandlerFlux, nil
+	case "discord_embed":
+		return HandlerDiscordEmbed, nil
 	default:
 		return 0, fmt.Errorf("invalid handler type %q", ty)
 	}

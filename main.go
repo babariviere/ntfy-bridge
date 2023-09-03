@@ -74,6 +74,8 @@ func main() {
 		switch handler.Type {
 		case config.HandlerFlux:
 			h = bridge.NewFluxHandler()
+		case config.HandlerDiscordEmbed:
+			h = bridge.NewDiscordEmbedHandler()
 		}
 
 		slog.Debug("Registering bridge", "route", route, "handler", handler.Type)

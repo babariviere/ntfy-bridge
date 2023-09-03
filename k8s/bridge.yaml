@@ -17,6 +17,11 @@ data:
         type "flux"
         topic "flux"
     }
+
+    handler "/forgejo" {
+        type "discord_embed"
+        topic "forgejo"
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment

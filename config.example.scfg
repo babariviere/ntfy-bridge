@@ -23,3 +23,12 @@ handler "/flux" {
 #   type "alertmanager"
 #   topic "/infra"
 # }
+
+# Handle discord type messages. This is meant for
+# webhook that doesn't support generic one's.
+# Instead, we convert discord messages to ntfy message.
+# See: https://discord.com/developers/docs/resources/channel#message-object
+handler "/discord-like" {
+  type "discord_embed" # handle message with `embeds` content
+  topic "discord-like"
+}
