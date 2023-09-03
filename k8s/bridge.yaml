@@ -6,7 +6,7 @@ metadata:
 data:
   config.scfg: |
     http-address 0.0.0.0:8080
-    log-level info
+    log-level debug
     log-format text
 
     ntfy {
