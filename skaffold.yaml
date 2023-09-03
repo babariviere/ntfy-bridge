@@ -6,6 +6,7 @@ build:
   artifacts:
     - image: forge.babariviere.com/babariviere/ntfy-bridge
       buildpacks:
+  local: {}
 manifests:
   kustomize:
     paths:
