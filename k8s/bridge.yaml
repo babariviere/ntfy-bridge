@@ -10,7 +10,7 @@ data:
     log-format text
 
     ntfy {
-        server http://ntfy:80
+        server http://ntfy-http:80
     }
 
     handler "/flux" {
@@ -54,6 +54,6 @@ spec:
   ports:
   - port: 8080
     name: http
-  type: LoadBalancer
+  type: ClusterIP
   selector:
     app: bridge
