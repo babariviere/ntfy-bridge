@@ -23,11 +23,37 @@ type NotificationError struct {
 	Error string `json:"error"`
 }
 
+type NotificationAction struct {
+	Action string
+	Label  string
+	Params []string
+}
+
+func NewViewAction(label, url string, params ...string) NotificationAction {
+	return NotificationAction{
+		Action: "view",
+		Label:  label,
+		Params: append([]string{url}, params...),
+	}
+}
+
+func (n NotificationAction) Format() string {
+	var sb strings.Builder
+	sb.WriteString(n.Action + ", " + n.Label)
+
+	if len(n.Params) > 0 {
+		sb.WriteString(", " + strings.Join(n.Params, ", "))
+	}
+
+	return sb.String()
+}
+
 type Notification struct {
 	Title      string
 	Body       string
 	Priority   int
 	Tags       []string
+	Actions    []NotificationAction
 	IsMarkdown bool
 
 	topic string
@@ -68,6 +94,15 @@ func (n Notification) Send(base string) error {
 
 	if n.auth.AccessToken != "" {
 		req.Header.Set("Authorization", n.auth.bearer())
+	}
+
+	if len(n.Actions) > 0 {
+		actions := make([]string, len(n.Actions))
+		for i, act := range n.Actions {
+			actions[i] = act.Format()
+		}
+
+		req.Header.Set("Actions", strings.Join(actions, "; "))
 	}
 
 	resp, err := http.DefaultClient.Do(req)
