@@ -77,8 +77,11 @@ func main() {
 		}
 
 		slog.Debug("Registering bridge", "route", route, "handler", handler.Type)
-		// TODO: use default topic if topic == ""
-		bridge := bridge.NewBridge(cfg.Ntfy.Server, handler.Topic, h)
+		topic := handler.Topic
+		if topic == "" {
+			topic = cfg.Ntfy.DefaultTopic
+		}
+		bridge := bridge.NewBridge(cfg.Ntfy.Server, topic, h)
 		if !auth.IsEmpty() {
 			bridge.WithAuth(auth)
 		}
