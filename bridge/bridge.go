@@ -136,7 +136,7 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	defer r.Body.Close()
 
 	if errors.Is(err, errSkipNotification) {
-		w.WriteHeader(http.StatusOK)
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
@@ -156,5 +156,5 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	slog.Debug("notification sent with success")
 
-	w.WriteHeader(http.StatusOK)
+	w.WriteHeader(http.StatusNoContent)
 }
