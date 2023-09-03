@@ -1,0 +1,42 @@
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Provider
+metadata:
+  name: ntfy-bridge-dev
+spec:
+  type: generic
+  secretRef:
+    name: ntfy-bridge-dev-address
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ntfy-bridge-dev-address
+stringData:
+  address: "http://bridge.ntfy-bridge-dev.svc.cluster.local:8080/flux"
+---
+apiVersion: notification.toolkit.fluxcd.io/v1beta2
+kind: Alert
+metadata:
+  name: ntfy-bridge-dev
+spec:
+  summary: "k3s cluster"
+  providerRef:
+    name: ntfy-bridge-dev
+  eventSeverity: info
+  eventSources:
+    - kind: GitRepository
+      name: '*'
+      namespace: flux-system
+    - kind: Kustomization
+      name: '*'
+      namespace: flux-system
+    - kind: HelmRepository
+      name: '*'
+      namespace: flux-system
+    - kind: HelmChart
+      name: '*'
+      namespace: flux-system
+    - kind: HelmRelease
+      name: '*'
+      namespace: flux-system

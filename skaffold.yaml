@@ -1,0 +1,15 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+metadata:
+  name: ntfy-bridge
+build:
+  artifacts:
+    - image: forge.babariviere.com/babariviere/ntfy-bridge
+      buildpacks:
+manifests:
+  kustomize:
+    paths:
+      - k8s
+deploy:
+  kubectl:
+    defaultNamespace: ntfy-bridge-dev

@@ -40,8 +40,20 @@
           };
         };
 
-        devShells.default =
-          pkgs.mkShell {buildInputs = with pkgs; [go gopls goreleaser docker];};
+        devShells.default = pkgs.mkShell {
+          buildInputs = with pkgs; [
+            # Go tools
+            go
+            gopls
+            goreleaser
+
+            # Required for goreleaser
+            docker
+
+            # Testing
+            skaffold
+          ];
+        };
       };
       flake = {
       };

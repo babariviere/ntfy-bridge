@@ -1,0 +1,77 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ntfy-config
+data:
+  server.yml: |
+    cache-file: "/var/cache/ntfy/cache.db"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ntfy
+  labels:
+    app: ntfy
+spec:
+  revisionHistoryLimit: 1
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ntfy
+  template:
+    metadata:
+      labels:
+        app: ntfy
+    spec:
+      containers:
+        - name: ntfy
+          image: binwiederhier/ntfy:latest
+          imagePullPolicy: Always
+          args: ["serve"]
+          env:
+            - name: TZ # set timezone
+              value: Etc/UTC
+            - name: NTFY_DEBUG # enable/disable debug
+              value: "true"
+            - name: NTFY_LOG_LEVEL # adjust log level
+              value: INFO
+          ports:
+            - name: ntfy-http
+              containerPort: 80
+          resources:
+            limits:
+              memory: 300Mi
+            requests:
+              cpu: 150m
+              memory: 150Mi
+          volumeMounts:
+            - mountPath: /etc/ntfy/server.yml
+              subPath: server.yml
+              name: config-volume
+            - mountPath: /var/cache/ntfy
+              name: cache-volume #cache volume mounted to persistent volume
+            - mountPath: /var/lib/ntfy
+              name: lib-volume
+      volumes:
+        - name: config-volume
+          configMap:
+            name: ntfy-config
+        - name: cache-volume
+          emptyDir: {}
+        - name: lib-volume
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ntfy-http
+spec:
+  type: ClusterIP
+  selector:
+    app: ntfy
+  ports:
+    - name: ntfy-http-out
+      protocol: TCP
+      port: 80
+      targetPort: ntfy-http

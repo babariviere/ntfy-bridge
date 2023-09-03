@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bridge-config
+data:
+  config.scfg: |
+    http-address 0.0.0.0:8080
+    log-level info
+    log-format text
+
+    ntfy {
+        server http://ntfy:80
+    }
+
+    handler "/flux" {
+        type "flux"
+        topic "flux"
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bridge
+spec:
+  selector:
+    matchLabels:
+      app: bridge
+  template:
+    metadata:
+      labels:
+        app: bridge
+    spec:
+      containers:
+      - name: bridge
+        image: forge.babariviere.com/babariviere/ntfy-bridge:latest
+        ports:
+          - containerPort: 8080
+        volumeMounts:
+          - mountPath: /etc/ntfy-bridge/config.scfg
+            subPath: config.scfg
+            name: config-volume
+      volumes:
+        - name: config-volume
+          configMap:
+            name: bridge-config
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: bridge
+spec:
+  ports:
+  - port: 8080
+    name: http
+  type: LoadBalancer
+  selector:
+    app: bridge
