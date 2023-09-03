@@ -9,24 +9,26 @@ import (
 	"time"
 )
 
-// TODO: use skaffold to see why the revision is not present
 type FluxNotification struct {
 	InvolvedObject struct {
-		APIVersion string `json:"apiVersion"`
-		Kind       string `json:"kind"`
-		Name       string `json:"name"`
-		Namespace  string `json:"namespace"`
-		UID        string `json:"uid"`
+		Kind            string `json:"kind"`
+		Namespace       string `json:"namespace"`
+		Name            string `json:"name"`
+		UID             string `json:"uid"`
+		APIVersion      string `json:"apiVersion"`
+		ResourceVersion string `json:"resourceVersion"`
 	} `json:"involvedObject"`
-	Metadata struct {
-		KustomizeToolkitFluxcdIoRevision string `json:"kustomize.toolkit.fluxcd.io/revision"`
+	Severity  string    `json:"severity"`
+	Timestamp time.Time `json:"timestamp"`
+	Message   string    `json:"message"`
+	Reason    string    `json:"reason"`
+	Metadata  struct {
+		CommitStatus string `json:"commit_status"`
+		Revision     string `json:"revision"`
+		Summary      string `json:"summary"`
 	} `json:"metadata"`
-	Severity            string    `json:"severity"`
-	Reason              string    `json:"reason"`
-	Message             string    `json:"message"`
-	ReportingController string    `json:"reportingController"`
-	ReportingInstance   string    `json:"reportingInstance"`
-	Timestamp           time.Time `json:"timestamp"`
+	ReportingController string `json:"reportingController"`
+	ReportingInstance   string `json:"reportingInstance"`
 }
 
 type FluxHandler struct{}
@@ -52,7 +54,7 @@ func (f FluxHandler) FormatNotification(r io.Reader) (Notification, error) {
 
 	title := fmt.Sprintf("[%s] %s %s/%s.%s", not.Severity, not.Reason,
 		strings.ToLower(not.InvolvedObject.Kind), not.InvolvedObject.Namespace, not.InvolvedObject.Name)
-	body := not.Message + "\n\n**revision**\n" + not.Metadata.KustomizeToolkitFluxcdIoRevision
+	body := not.Message + "\n\n**revision**\n" + not.Metadata.Revision
 
 	l.Debug("flux notification", slog.Group("notification",
 		slog.String("title", title),
