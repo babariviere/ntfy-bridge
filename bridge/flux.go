@@ -62,7 +62,7 @@ func (f FluxHandler) FormatNotification(r io.Reader) (Notification, error) {
 	if not.Reason == "ReconciliationSucceeded" {
 		if ok := f.reconciliations[obj]; !ok {
 			// Filter out spammy ReconciliationSucceeded notification
-			return Notification{}, nil
+			return Notification{}, errSkipNotification
 		}
 
 		// we will print the object so skip it next time it spam

@@ -11,6 +11,10 @@ import (
 	"strings"
 )
 
+var (
+	errSkipNotification = errors.New("notification skipped")
+)
+
 type Handler interface {
 	FormatNotification(r io.Reader) (Notification, error)
 }
@@ -131,16 +135,14 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	not, err := b.h.FormatNotification(r.Body)
 	defer r.Body.Close()
 
-	if err != nil {
-		slog.Error("failed to format notification")
-		w.WriteHeader(http.StatusBadRequest)
+	if errors.Is(err, errSkipNotification) {
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
-	// If notification is empty, that means it should be ignored.
-	// TODO: maybe return an error instead of empty notification
-	if not.IsEmpty() {
-		w.WriteHeader(http.StatusOK)
+	if err != nil {
+		slog.Error("failed to format notification")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
