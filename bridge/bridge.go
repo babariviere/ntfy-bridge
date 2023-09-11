@@ -163,7 +163,6 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	nots, err := b.h.ProduceNotifications(r)
-
 	if err != nil {
 		slog.Error("failed to format notification")
 		w.WriteHeader(http.StatusBadRequest)
