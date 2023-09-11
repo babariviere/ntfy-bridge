@@ -63,7 +63,7 @@ func (f FluxHandler) ProduceNotifications(r *http.Request) ([]Notification, erro
 	if not.Reason == "ReconciliationSucceeded" {
 		if ok := f.reconciliations[obj]; !ok {
 			// Filter out spammy ReconciliationSucceeded notification
-			return nil, errSkipNotification
+			return nil, nil
 		}
 
 		// we will print the object so skip it next time it spam

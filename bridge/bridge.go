@@ -10,10 +10,6 @@ import (
 	"strings"
 )
 
-var (
-	errSkipNotification = errors.New("notification skipped")
-)
-
 type Handler interface {
 	ProduceNotifications(r *http.Request) ([]Notification, error)
 }
@@ -168,14 +164,15 @@ func (b Bridge) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	nots, err := b.h.ProduceNotifications(r)
 
-	if errors.Is(err, errSkipNotification) {
-		w.WriteHeader(http.StatusNoContent)
-		return
-	}
-
 	if err != nil {
 		slog.Error("failed to format notification")
 		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(nots) == 0 {
+		slog.Debug("no notification produced")
+		w.WriteHeader(http.StatusNoContent)
 		return
 	}
 
