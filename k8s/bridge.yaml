@@ -22,6 +22,11 @@ data:
         type "discord_embed"
         topic "forgejo"
     }
+
+    handler "/alerts" {
+        type "alertmanager"
+        topic "infra"
+    }
 ---
 apiVersion: apps/v1
 kind: Deployment
