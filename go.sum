@@ -1,4 +1,6 @@
 git.sr.ht/~emersion/go-scfg v0.0.0-20230828131541-76adf4aeafd7 h1:Cxfw56Srn4yJ2qPUuUvG9qQoQl45U7SsCjSmeTN63Xw=
 git.sr.ht/~emersion/go-scfg v0.0.0-20230828131541-76adf4aeafd7/go.mod h1:ybgvEJTIx5XbaspSviB3KNa6OdPmAZqDoSud7z8fFlw=
+git.sr.ht/~emersion/go-scfg v0.0.0-20240128091534-2ae16e782082 h1:9Udx5fm4vRtmgDIBjy2ef5QioHbzpw5oHabbhpAUyEw=
+git.sr.ht/~emersion/go-scfg v0.0.0-20240128091534-2ae16e782082/go.mod h1:ybgvEJTIx5XbaspSviB3KNa6OdPmAZqDoSud7z8fFlw=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
